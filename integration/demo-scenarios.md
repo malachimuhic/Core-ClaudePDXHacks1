@@ -46,6 +46,7 @@ Three prepared scenarios to show off FixIt Bot's capabilities during the demo.
 
 **Prompt:**
 > I see sparks and hear a buzzing sound when I plug things into my kitchen outlet. Sometimes the lights flicker too. Can I fix this myself?
+[Upload sparking wire image]
 
 **Expected response covers:**
 - Identifies as electrical / high or critical severity
