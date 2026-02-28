@@ -575,6 +575,276 @@ body.dark {
   cursor: not-allowed;
 }
 
+/* ========== Checklist Toggle Button ========== */
+.checklist-toggle-btn {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.checklist-toggle-btn:hover,
+.checklist-toggle-btn.active {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* ========== Checklist Panel ========== */
+.checklist-panel {
+  background: #f8faff;
+  border-bottom: 2px solid #dbeafe;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 0;
+  overflow: hidden;
+  padding: 0 16px;
+  opacity: 0;
+  transition: max-height 0.3s ease, opacity 0.25s ease, padding 0.3s ease;
+}
+
+.checklist-panel.open {
+  max-height: 300px;
+  opacity: 1;
+  padding: 12px 16px;
+}
+
+.app.dark .checklist-panel {
+  background: #0f2040;
+  border-bottom-color: #1e3a5f;
+}
+
+.checklist-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.checklist-title {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #1e40af;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.app.dark .checklist-title {
+  color: #6aabf7;
+}
+
+.checklist-progress {
+  font-weight: 400;
+  font-size: 0.78rem;
+  color: #64748b;
+  background: #e0edff;
+  padding: 1px 7px;
+  border-radius: 10px;
+}
+
+.app.dark .checklist-progress {
+  background: #1e3a5f;
+  color: #93c5fd;
+}
+
+.checklist-clear-done {
+  font-size: 0.72rem;
+  color: #ef4444;
+  background: none;
+  border: 1px solid #fca5a5;
+  border-radius: 5px;
+  padding: 2px 8px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+
+.checklist-clear-done:hover {
+  background: #fee2e2;
+}
+
+.app.dark .checklist-clear-done:hover {
+  background: #3f1010;
+}
+
+.checklist-empty {
+  font-size: 0.82rem;
+  color: #94a3b8;
+  font-style: italic;
+  text-align: center;
+  padding: 8px 0;
+}
+
+.checklist-items {
+  list-style: none;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.checklist-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  border-radius: 7px;
+  background: white;
+  border: 1px solid #e0e7ff;
+  transition: background 0.15s;
+}
+
+.app.dark .checklist-item {
+  background: #16213e;
+  border-color: #2a3a5e;
+}
+
+.checklist-item.done {
+  opacity: 0.55;
+  background: #f1f5f9;
+}
+
+.app.dark .checklist-item.done {
+  background: #0a1628;
+}
+
+.checklist-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  flex: 1;
+  cursor: pointer;
+  min-width: 0;
+}
+
+.checklist-checkbox {
+  margin-top: 2px;
+  width: 15px;
+  height: 15px;
+  accent-color: #2563eb;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.checklist-text {
+  font-size: 0.85rem;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.checklist-item.done .checklist-text {
+  text-decoration: line-through;
+  color: #94a3b8;
+}
+
+.checklist-delete {
+  background: none;
+  border: none;
+  color: #cbd5e1;
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 0 2px;
+  line-height: 1;
+  flex-shrink: 0;
+  transition: color 0.15s;
+}
+
+.checklist-delete:hover {
+  color: #ef4444;
+}
+
+.checklist-add-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.checklist-input {
+  flex: 1;
+  padding: 7px 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 7px;
+  font-size: 0.85rem;
+  font-family: inherit;
+  outline: none;
+  background: white;
+  color: #333;
+  transition: border-color 0.15s;
+}
+
+.checklist-input:focus {
+  border-color: #2563eb;
+}
+
+.app.dark .checklist-input {
+  background: #1a1a2e;
+  border-color: #2a3a5e;
+  color: #e0e0e0;
+}
+
+.app.dark .checklist-input:focus {
+  border-color: #4a90d9;
+}
+
+.checklist-add-btn {
+  padding: 7px 14px;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 7px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+
+.checklist-add-btn:hover:not(:disabled) {
+  background: #1d4ed8;
+}
+
+.checklist-add-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ========== Add Steps to Checklist Button ========== */
+.add-steps-btn {
+  font-size: 0.7rem;
+  color: #2563eb;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 5px;
+  padding: 2px 8px;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 600;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.add-steps-btn:hover {
+  background: #dbeafe;
+  border-color: #2563eb;
+}
+
+.app.dark .add-steps-btn {
+  color: #6aabf7;
+  background: #1e3a5f;
+  border-color: #2a4a7f;
+}
+
+.app.dark .add-steps-btn:hover {
+  background: #1e4080;
+}
+
 /* ========== Mobile Responsive ========== */
 @media (max-width: 600px) {
   .app {

@@ -171,6 +171,98 @@ function FormatResponse({ text }) {
   return <div className="formatted-response">{elements}</div>;
 }
 
+/** Extract numbered steps from AI response text */
+function extractSteps(text) {
+  return text
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => /^\d+[\.\)]\s+.+/.test(line))
+    .map((line) => line.replace(/^\d+[\.\)]\s+/, ''));
+}
+
+/** Checklist panel component */
+function Checklist({ items, open, onToggle, onAdd, onDelete, onClearDone, darkMode }) {
+  const [newTask, setNewTask] = useState('');
+  const inputRef = useRef(null);
+
+  const done = items.filter((i) => i.done).length;
+
+  const handleAdd = () => {
+    const t = newTask.trim();
+    if (!t) return;
+    onAdd(t);
+    setNewTask('');
+    inputRef.current?.focus();
+  };
+
+  const handleKey = (e) => {
+    if (e.key === 'Enter') handleAdd();
+  };
+
+  return (
+    <div className={`checklist-panel${open ? ' open' : ''}`}>
+      <div className="checklist-header">
+        <span className="checklist-title">
+          House Repair Tasks
+          {items.length > 0 && (
+            <span className="checklist-progress">{done}/{items.length} done</span>
+          )}
+        </span>
+        {done > 0 && (
+          <button className="checklist-clear-done" onClick={onClearDone}>
+            Clear done
+          </button>
+        )}
+      </div>
+
+      {items.length === 0 ? (
+        <p className="checklist-empty">No tasks yet. Ask FixIt Bot or add one below.</p>
+      ) : (
+        <ul className="checklist-items">
+          {items.map((item) => (
+            <li key={item.id} className={`checklist-item${item.done ? ' done' : ''}`}>
+              <label className="checklist-label">
+                <input
+                  type="checkbox"
+                  checked={item.done}
+                  onChange={() => onToggle(item.id)}
+                  className="checklist-checkbox"
+                />
+                <span className="checklist-text">{item.text}</span>
+              </label>
+              <button
+                className="checklist-delete"
+                onClick={() => onDelete(item.id)}
+                title="Remove task"
+              >
+                ×
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <div className="checklist-add-row">
+        <input
+          ref={inputRef}
+          className="checklist-input"
+          value={newTask}
+          onChange={(e) => setNewTask(e.target.value)}
+          onKeyDown={handleKey}
+          placeholder="Add a task..."
+        />
+        <button
+          className="checklist-add-btn"
+          onClick={handleAdd}
+          disabled={!newTask.trim()}
+        >
+          Add
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function App() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
@@ -182,6 +274,8 @@ function App() {
   });
   const [dragOver, setDragOver] = useState(false);
   const [copiedId, setCopiedId] = useState(null);
+  const [showChecklist, setShowChecklist] = useState(false);
+  const [checklist, setChecklist] = useState([]);
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
   const textareaRef = useRef(null);
@@ -195,6 +289,28 @@ function App() {
   useEffect(() => {
     document.body.classList.toggle('dark', darkMode);
   }, [darkMode]);
+
+  const addToChecklist = useCallback((tasks) => {
+    setChecklist((prev) => [
+      ...prev,
+      ...tasks.map((text) => ({ id: Date.now() + Math.random(), text, done: false })),
+    ]);
+    setShowChecklist(true);
+  }, []);
+
+  const toggleChecklistItem = useCallback((id) => {
+    setChecklist((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, done: !item.done } : item))
+    );
+  }, []);
+
+  const deleteChecklistItem = useCallback((id) => {
+    setChecklist((prev) => prev.filter((item) => item.id !== id));
+  }, []);
+
+  const clearDoneItems = useCallback(() => {
+    setChecklist((prev) => prev.filter((item) => !item.done));
+  }, []);
 
   // Auto-resize textarea
   const autoResize = useCallback(() => {
@@ -296,6 +412,9 @@ function App() {
         throw new Error(data.error || 'Request failed');
       }
 
+      const steps = extractSteps(data.response);
+      if (steps.length > 0) addToChecklist(steps);
+
       setMessages([
         ...updatedMessages,
         { role: 'assistant', content: data.response, timestamp: Date.now() },
@@ -337,6 +456,13 @@ function App() {
             <h1>FixIt Bot</h1>
           </div>
           <div className="header-actions">
+            <button
+              className={`checklist-toggle-btn${showChecklist ? ' active' : ''}`}
+              onClick={() => setShowChecklist((v) => !v)}
+              title="Toggle checklist"
+            >
+              ☑ Tasks{checklist.length > 0 && ` (${checklist.filter((i) => i.done).length}/${checklist.length})`}
+            </button>
             {messages.length > 0 && (
               <button className="clear-btn" onClick={clearChat} title="Clear chat">
                 Clear
@@ -353,6 +479,16 @@ function App() {
         </div>
         <p>Describe your home repair issue or snap a photo</p>
       </header>
+
+      <Checklist
+        items={checklist}
+        open={showChecklist}
+        onToggle={toggleChecklistItem}
+        onAdd={(text) => addToChecklist([text])}
+        onDelete={deleteChecklistItem}
+        onClearDone={clearDoneItems}
+        darkMode={darkMode}
+      />
 
       <div
         className={`messages ${dragOver ? 'drag-over' : ''}`}
