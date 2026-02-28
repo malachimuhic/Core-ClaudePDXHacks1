@@ -14,7 +14,9 @@ if (!process.env.ANTHROPIC_API_KEY) {
   process.exit(1);
 }
 
+const path         = require('path');
 const express      = require('express');
+const helmet       = require('helmet');
 const cors         = require('cors');
 const chatRouter   = require('./routes/chat');
 const errorHandler = require('./middleware/errorHandler');
@@ -28,6 +30,9 @@ const PORT = process.env.PORT || 3001;
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
 
 // --- Global middleware ---
+
+// Sets security headers: X-Content-Type-Options, X-Frame-Options, HSTS, etc.
+app.use(helmet());
 
 // cors() must come before route handlers so preflight OPTIONS requests are
 // answered before they reach any route or body-parsing logic.
@@ -45,12 +50,15 @@ app.use(express.json({ limit: '10mb' }));
 // are /api/health and /api/chat.
 app.use('/api', chatRouter);
 
-// --- 404 handler ---
-// Registered after all valid routes. Express falls through here only when no
-// earlier route matched. Returns JSON (not Express's default HTML) so clients
-// always receive a consistent error shape.
-app.use((req, res) => {
-  res.status(404).json({ error: `Cannot ${req.method} ${req.path}` });
+// --- Static frontend ---
+// Serve the production build of the React app. In development this is bypassed
+// because the Vite dev server handles the frontend on port 5173 instead.
+const frontendDist = path.join(__dirname, '../frontend/dist');
+app.use(express.static(frontendDist));
+
+// Catch-all: return index.html for any non-API route so client-side navigation works.
+app.get('*', (req, res) => {
+  res.sendFile(path.join(frontendDist, 'index.html'));
 });
 
 // --- Centralized error handler ---
