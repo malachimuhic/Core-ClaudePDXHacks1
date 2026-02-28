@@ -26,7 +26,7 @@ Three prepared scenarios to show off FixIt Bot's capabilities during the demo.
 
 **Purpose:** Shows Claude's vision capability analyzing a photo.
 
-**Setup:** Have a photo ready of water-stained ceiling, cracked tile, or similar visible damage.
+**Setup:** Uploade leaky pipe png from Repo
 
 **Prompt:**
 > [Upload photo] I noticed this today — is this serious?
