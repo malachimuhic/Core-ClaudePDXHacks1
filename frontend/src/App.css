@@ -265,9 +265,22 @@ body.dark {
   box-shadow: 0 2px 8px rgba(37, 99, 235, 0.12);
 }
 
+/* ========== Message Animation ========== */
+@keyframes messageIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* ========== Message Bubbles ========== */
 .message {
   display: flex;
+  animation: messageIn 0.3s ease-out;
 }
 
 .message.user {
@@ -367,6 +380,15 @@ body.dark {
   background: #f0f0f0;
 }
 
+.copy-btn.copied {
+  color: #16a34a;
+  font-weight: 600;
+}
+
+.app.dark .copy-btn.copied {
+  color: #4ade80;
+}
+
 /* ========== Formatted Response ========== */
 .formatted-response {
   display: flex;
@@ -407,6 +429,13 @@ body.dark {
 }
 
 /* ========== Loading Indicator ========== */
+.typing-label {
+  font-size: 0.82rem;
+  color: #888;
+  font-style: italic;
+  margin-right: 6px;
+}
+
 .loading-indicator {
   display: flex;
   gap: 5px;

@@ -181,6 +181,7 @@ function App() {
     return window.matchMedia?.('(prefers-color-scheme: dark)').matches || false;
   });
   const [dragOver, setDragOver] = useState(false);
+  const [copiedId, setCopiedId] = useState(null);
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
   const textareaRef = useRef(null);
@@ -316,8 +317,10 @@ function App() {
     }
   };
 
-  const copyToClipboard = (text) => {
+  const copyToClipboard = (text, id) => {
     navigator.clipboard.writeText(text);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId((cur) => (cur === id ? null : cur)), 1500);
   };
 
   const formatTime = (ts) => {
@@ -404,11 +407,11 @@ function App() {
                 <span className="message-time">{formatTime(msg.timestamp)}</span>
                 {msg.role === 'assistant' && (
                   <button
-                    className="copy-btn"
-                    onClick={() => copyToClipboard(msg.content)}
+                    className={`copy-btn${copiedId === msg.timestamp ? ' copied' : ''}`}
+                    onClick={() => copyToClipboard(msg.content, msg.timestamp)}
                     title="Copy response"
                   >
-                    Copy
+                    {copiedId === msg.timestamp ? 'Copied!' : 'Copy'}
                   </button>
                 )}
               </div>
@@ -423,6 +426,7 @@ function App() {
             </div>
             <div className="message-bubble">
               <div className="loading-indicator">
+                <span className="typing-label">FixIt Bot is thinking...</span>
                 <span className="dot"></span>
                 <span className="dot"></span>
                 <span className="dot"></span>
