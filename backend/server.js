@@ -27,16 +27,17 @@ const PORT = process.env.PORT || 3001;
 // var to the deployed frontend origin. Restricting to a specific origin
 // (instead of '*') prevents arbitrary websites from making requests to the API.
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
+const isProduction = process.env.NODE_ENV === 'production' || process.env.RAILWAY_ENVIRONMENT;
 
 // --- Global middleware ---
 
 // Sets security headers: X-Content-Type-Options, X-Frame-Options, HSTS, etc.
 app.use(helmet());
 
-// cors() must come before route handlers so preflight OPTIONS requests are
-// answered before they reach any route or body-parsing logic.
+// In production the frontend is served from the same origin, so allow same-origin
+// requests. In development, allow the Vite dev server origin.
 app.use(cors({
-  origin: FRONTEND_URL,
+  origin: isProduction ? true : FRONTEND_URL,
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type'],
 }));
@@ -66,7 +67,8 @@ app.get('*', (req, res) => {
 app.use(errorHandler);
 
 // --- Start server ---
-app.listen(PORT, () => {
-  console.log(`FixIt Bot backend running on http://localhost:${PORT}`);
-  console.log(`Accepting requests from: ${FRONTEND_URL}`);
+const HOST = isProduction ? '0.0.0.0' : 'localhost';
+app.listen(PORT, HOST, () => {
+  console.log(`FixIt Bot backend running on http://${HOST}:${PORT}`);
+  console.log(`Environment: ${isProduction ? 'production' : 'development'}`);
 });
