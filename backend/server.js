@@ -9,9 +9,8 @@ require('dotenv').config({ path: require('path').join(__dirname, '.env.backend')
 // error deep inside claude-client.js. Checking here surfaces the problem the
 // moment the server starts, before any request is accepted.
 if (!process.env.ANTHROPIC_API_KEY) {
-  console.error('FATAL: ANTHROPIC_API_KEY environment variable is not set.');
-  console.error('Add your key to backend/.env.backend.');
-  process.exit(1);
+  console.warn('WARNING: ANTHROPIC_API_KEY environment variable is not set.');
+  console.warn('The /api/chat endpoint will fail until this is configured.');
 }
 
 const path         = require('path');
