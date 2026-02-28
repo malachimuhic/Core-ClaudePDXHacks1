@@ -2,6 +2,9 @@
   "name": "fixit-bot",
   "private": true,
   "version": "0.0.1",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "build": "cd frontend && npm install && npm run build && cd ../ai-service && npm install",
     "start": "cd backend && npm install && node server.js"
